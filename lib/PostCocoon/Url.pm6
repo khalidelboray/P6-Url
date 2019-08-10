@@ -53,15 +53,19 @@ sub url-decode (Str $data --> Str) is export {
 multi sub build-query-string (Hash $hash --> Str) is export {
   my @query-items;
   for $hash.kv -> $key, $value {
-    if ($value eq True) {
-      @query-items.push: url-encode($key);
-    } elsif ($value ~~ List) {
-      for $value.kv -> $k, $v {
-        @query-items.push: url-encode($key) ~ "=" ~ url-encode($v);
+      given $value {
+          when Bool {
+                 @query-items.push: url-encode($key) if $value;
+          }
+          when List {
+              for $value.kv -> $k, $v {
+                  @query-items.push: url-encode($key) ~ "=" ~ url-encode(~$v);
+              }
+          }
+          default {
+              @query-items.push: url-encode($key) ~ "=" ~ url-encode(~$value);
+          }
       }
-    } else {
-      @query-items.push: url-encode($key) ~ "=" ~ url-encode($value);
-    }
   }
 
   return @query-items.join("&");
