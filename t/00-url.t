@@ -2,7 +2,7 @@ use v6;
 use PostCocoon::Url;
 use Test;
 
-plan 21;
+plan 26;
 ok "%00" eq url-encode("\0"), "Encode null-char";
 ok "%F0%9F%91%8C" eq url-encode("👌"), "Encode emoji";
 ok url-decode(url-encode("\0")) eq "\0", "Encode and decode null-char";
@@ -24,3 +24,8 @@ ok False eq is-valid-url(""), "Check that empty string is not an valid url";
 ok False eq is-valid-url("je moeder"), "Check that \"je moeder\" is not an valid url";
 ok True eq is-valid-url("http://126.0.1.3"), "Check that \"http://126.0.1.3\" is an valid url";
 ok True eq is-valid-url("/"), "Check that \"/\" is an valid url";
+ok 'names=khaled' eq build-query-string(names => ['khaled']);
+ok {Bool => True} eq parse-query-string('Bool');
+ok 'Bool' eq build-query-string(Bool => True);
+ok 'count=120' eq build-query-string(count => 120);
+ok '' eq build-query-string( False => False );
